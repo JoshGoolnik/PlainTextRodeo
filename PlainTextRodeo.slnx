@@ -1,5 +1,4 @@
 <Solution>
   <Project Path="Rodeo.PlainText.Core/Rodeo.PlainText.Core.csproj" />
   <Project Path="Rodeo.PlainText.Tests/Rodeo.PlainText.Tests.csproj" />
-  <Project Path="Rodeo.PlainText.Wpf/Rodeo.PlainText.Wpf.csproj" />
 </Solution>
