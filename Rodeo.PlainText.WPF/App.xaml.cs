@@ -2,7 +2,7 @@
 using System.Data;
 using System.Windows;
 
-namespace Rodeo.PlainText.WPF
+namespace Rodeo.PlainText.Wpf
 {
     /// <summary>
     /// Interaction logic for App.xaml
