@@ -23,10 +23,14 @@ public partial class MainWindow : Window
 
     private void UpdateTreeView(string json)
     {
+        if (string.IsNullOrWhiteSpace(json))
+        {
+            outputTreeView.ItemsSource = null;
+            return;
+        }
         var result = Core.Json.JsonParser.ParseJson(json);
         if (result.Node == null)
         {
-            outputTreeView.ItemsSource = null;
             return;
         }
         else
