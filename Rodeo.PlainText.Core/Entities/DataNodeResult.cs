@@ -2,7 +2,7 @@
 
 public record DataNodeResult
 {
-    public DataNode? Node { get; set; }
-    public string? Message { get; set; }
-    public long? LineNumber { get; set; }
+    public DataNode? Node { get; init; }
+    public string? Message { get; init; }
+    public long? LineNumber { get; init; }
 }

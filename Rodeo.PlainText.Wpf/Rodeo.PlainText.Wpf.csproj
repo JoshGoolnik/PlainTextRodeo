@@ -8,4 +8,8 @@
     <UseWPF>true</UseWPF>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Rodeo.PlainText.Core\Rodeo.PlainText.Core.csproj" />
+  </ItemGroup>
+
 </Project>
