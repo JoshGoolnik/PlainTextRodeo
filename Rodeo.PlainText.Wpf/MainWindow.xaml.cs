@@ -1,24 +1,43 @@
-﻿using System.Text;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
-namespace Rodeo.PlainText.Wpf
+namespace Rodeo.PlainText.Wpf;
+
+/// <summary>
+/// Interaction logic for MainWindow.xaml
+/// </summary>
+public partial class MainWindow : Window
 {
-    /// <summary>
-    /// Interaction logic for MainWindow.xaml
-    /// </summary>
-    public partial class MainWindow : Window
+    public MainWindow()
     {
-        public MainWindow()
+        InitializeComponent();
+        inputTextBox.TextChanged += inputTextBox_TextChanged;
+        UpdateStatus(inputTextBox.Text);
+    }
+    private void inputTextBox_TextChanged(object sender, TextChangedEventArgs e)
+    {
+        var json = ((TextBox)sender).Text;
+        UpdateTreeView(json);
+        UpdateStatus(json);
+    }
+
+    private void UpdateTreeView(string json)
+    {
+        var result = Core.Json.JsonParser.ParseJson(json);
+        if (result.Node == null)
         {
-            InitializeComponent();
+            outputTreeView.ItemsSource = null;
+            return;
         }
+        else
+        {
+            outputTreeView.ItemsSource = result.Node.Children;
+        }
+    }
+
+    private void UpdateStatus(string json)
+    {
+        var result = Core.Json.JsonParser.ParseJson(json);
+        statusTextBox.Text = result.Message + " | Line: " + result.LineNumber;
     }
 }

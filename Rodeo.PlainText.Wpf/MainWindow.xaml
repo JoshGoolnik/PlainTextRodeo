@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Rodeo.PlainText.Wpf"
+        xmlns:entities="clr-namespace:Rodeo.PlainText.Core.Entities;assembly=Rodeo.PlainText.Core"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
     <Grid>
@@ -15,18 +16,19 @@
             <RowDefinition Height="*" />
             <RowDefinition Height="20" />
         </Grid.RowDefinitions>
-        <TextBox AcceptsReturn="True" Text="Hello, World!" Grid.Row="0" FontSize="10" FontFamily="Consolas" HorizontalAlignment="Left" VerticalAlignment="Top" />
+        <TextBox Name="inputTextBox" AcceptsReturn="True" Text="Hello, World!" Grid.Row="0" 
+                 FontSize="10" FontFamily="Consolas" HorizontalAlignment="Left" VerticalAlignment="Top" />
         <GridSplitter Grid.Column="0" Grid.Row="0" Width="5" HorizontalAlignment="Right" VerticalAlignment="Stretch" Background="Gray" />
-        <TreeView Grid.Column="1" Grid.Row="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-            <TreeViewItem Header="Item 1">
-                <TreeViewItem Header="Subitem 1.1" />
-                <TreeViewItem Header="Subitem 1.2" />
-            </TreeViewItem>
-            <TreeViewItem Header="Item 2">
-                <TreeViewItem Header="Subitem 2.1" />
-                <TreeViewItem Header="Subitem 2.2" />
-            </TreeViewItem>
+        <TreeView Name="outputTreeView" Grid.Column="1" Grid.Row="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+            <TreeView.ItemTemplate>
+                <HierarchicalDataTemplate DataType="{x:Type entities:DataNode}" ItemsSource="{Binding Children}">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="{Binding Name}" />
+                        <TextBlock Text="{Binding Value}" Margin="10,0,0,0"/>
+                    </StackPanel>
+                </HierarchicalDataTemplate>
+            </TreeView.ItemTemplate>
         </TreeView>
-        <TextBox Grid.Row="1" Grid.ColumnSpan="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+        <TextBox Name="statusTextBox" Grid.Row="1" Grid.ColumnSpan="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
     </Grid>
 </Window>
