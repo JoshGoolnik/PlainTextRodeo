@@ -7,6 +7,26 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
     <Grid>
-
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="20" />
+        </Grid.RowDefinitions>
+        <TextBox AcceptsReturn="True" Text="Hello, World!" Grid.Row="0" FontSize="10" FontFamily="Consolas" HorizontalAlignment="Left" VerticalAlignment="Top" />
+        <GridSplitter Grid.Column="0" Grid.Row="0" Width="5" HorizontalAlignment="Right" VerticalAlignment="Stretch" Background="Gray" />
+        <TreeView Grid.Column="1" Grid.Row="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+            <TreeViewItem Header="Item 1">
+                <TreeViewItem Header="Subitem 1.1" />
+                <TreeViewItem Header="Subitem 1.2" />
+            </TreeViewItem>
+            <TreeViewItem Header="Item 2">
+                <TreeViewItem Header="Subitem 2.1" />
+                <TreeViewItem Header="Subitem 2.2" />
+            </TreeViewItem>
+        </TreeView>
+        <TextBox Grid.Row="1" Grid.ColumnSpan="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
     </Grid>
 </Window>
