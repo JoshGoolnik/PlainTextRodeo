@@ -5,20 +5,30 @@ namespace Rodeo.PlainText.Core.Json;
 
 public class JsonParser
 {
+    // Line number offset to convert from 0-based to 1-based line number (humans read line 1 as line 1, not line 0!)
+    private const int LineOffset = 1;
+
     public static DataNodeResult ParseJson(string json)
     {
-        try
+        if (string.IsNullOrWhiteSpace(json))
         {
-            using (JsonDocument doc = JsonDocument.Parse(json))
-            {
-                DataNode node = ParseElement(doc.RootElement, null);
-                return new DataNodeResult { Node = node };
-            }
+            // Empty or whitespace JSON string, return an empty DataNodeResult with no node and no message
+            return new DataNodeResult { Node = null, Message = null, LineNumber = null };
         }
-        catch (JsonException ex)
+        else
         {
-            // Line Numer + 1 to convert from 0-based to 1-based line number (humans read line 1 as line 1, not line 0!)
-            return new DataNodeResult { Message = ex.Message, LineNumber = ex.LineNumber + 1 }; 
+            try
+            {
+                using (JsonDocument doc = JsonDocument.Parse(json))
+                {
+                    DataNode node = ParseElement(doc.RootElement, null);
+                    return new DataNodeResult { Node = node };
+                }
+            }
+            catch (JsonException ex)
+            {
+                return new DataNodeResult { Message = ex.Message, LineNumber = ex.LineNumber + LineOffset };
+            }
         }
     }
 

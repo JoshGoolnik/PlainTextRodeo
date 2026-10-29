@@ -15,7 +15,7 @@ public class JsonParserUnitTests
         var result = JsonParser.ParseJson(json);
         // Assert
         Assert.NotNull(result);
-        Assert.Equal("Josh", result.Node?.Children?.Find(n => n.Name == "name")?.Value);
+        Assert.Equal("Josh", result.Node?.Children?.FirstOrDefault(n => n.Name == "name")?.Value);
     }
 
     [Fact]
@@ -27,7 +27,7 @@ public class JsonParserUnitTests
         var result = JsonParser.ParseJson(json);
         // Assert
         Assert.NotNull(result);
-        var numbersNode = result.Node?.Children?.Find(n => n.Name == "numbers");
+        var numbersNode = result.Node?.Children?.FirstOrDefault(n => n.Name == "numbers");
         Assert.NotNull(numbersNode);
         Assert.Equal(DataNodeType.Array, numbersNode.NodeType);
         Assert.Equal("1", numbersNode.Children?[0].Value);
@@ -43,7 +43,7 @@ public class JsonParserUnitTests
         var result = JsonParser.ParseJson(json);
         // Assert
         Assert.NotNull(result);
-        Assert.Equal("1.10", result.Node?.Children?.Find(n => n.Name == "number")?.Value);
+        Assert.Equal("1.10", result.Node?.Children?.FirstOrDefault(n => n.Name == "number")?.Value);
     }
 
     [Fact]
@@ -55,14 +55,14 @@ public class JsonParserUnitTests
         var result = JsonParser.ParseJson(json);
         // Assert
         Assert.NotNull(result);
-        var objectNode = result.Node?.Children?.Find(n => n.Name == "object");
+        var objectNode = result.Node?.Children?.FirstOrDefault(n => n.Name == "object");
         Assert.NotNull(objectNode);
         Assert.Equal(DataNodeType.Object, objectNode.NodeType);
         Assert.Empty(objectNode.Children);
     }
 
     [Fact]
-    public void TestJsonParser_InvalidJsonEmptyString_ReturnsDataNodeResultWithErrorMessage()
+    public void TestJsonParser_EmptyString_ReturnsEmptyResult()
     {
         // Arrange
         var json = "";
@@ -71,8 +71,8 @@ public class JsonParserUnitTests
         // Assert
         Assert.NotNull(result);
         Assert.Null(result.Node);
-        Assert.NotNull(result.Message);
-        Assert.Equal(1, result.LineNumber);
+        Assert.Null(result.Message);
+        Assert.Null(result.LineNumber);
     }
 
     [Fact]
@@ -84,9 +84,9 @@ public class JsonParserUnitTests
         var result = JsonParser.ParseJson(json);
         // Assert
         Assert.NotNull(result);
-        Assert.Equal("Josh", result.Node?.Children?.Find(n => n.Name == "name")?.Value);
-        Assert.Equal("42", result.Node?.Children?.Find(n => n.Name == "age")?.Value);
-        Assert.Equal("false", result.Node?.Children?.Find(n => n.Name == "isStudent")?.Value);
+        Assert.Equal("Josh", result.Node?.Children?.FirstOrDefault(n => n.Name == "name")?.Value);
+        Assert.Equal("42", result.Node?.Children?.FirstOrDefault(n => n.Name == "age")?.Value);
+        Assert.Equal("false", result.Node?.Children?.FirstOrDefault(n => n.Name == "isStudent")?.Value);
     }
 
     [Fact]
@@ -111,10 +111,37 @@ public class JsonParserUnitTests
         var result = JsonParser.ParseJson(json);
         // Assert
         Assert.NotNull(result);
-        var personNode = result.Node?.Children?.Find(n => n.Name == "person");
+        var personNode = result.Node?.Children?.FirstOrDefault(n => n.Name == "person");
         Assert.NotNull(personNode);
         Assert.Equal(DataNodeType.Object, personNode.NodeType);
-        Assert.Equal("John", personNode.Children?.Find(n => n.Name == "name")?.Value);
-        Assert.Equal("30", personNode.Children?.Find(n => n.Name == "age")?.Value);
+        Assert.Equal("John", personNode.Children?.FirstOrDefault(n => n.Name == "name")?.Value);
+        Assert.Equal("30", personNode.Children?.FirstOrDefault(n => n.Name == "age")?.Value);
+    }
+
+    [Fact]
+    public void TestJsonParser_ValidJsonWithNullValue_ReturnsDataNode()
+    {
+        // Arrange
+        var json = "{\"name\":null}";
+        // Act
+        var result = JsonParser.ParseJson(json);
+        // Assert
+        var nameNode = result.Node?.Children?.FirstOrDefault(n => n.Name == "name");
+        Assert.NotNull(nameNode);
+        Assert.Null(nameNode.Value);
+        Assert.Equal(DataNodeType.Null, nameNode.NodeType);
+    }
+
+    [Fact]
+    public void TestJsonParser_InvalidJson_ReturnsErrorResult()
+    {
+        // Arrange
+        var json = "{\"name\": }";
+        // Act
+        var result = JsonParser.ParseJson(json);
+        // Assert
+        Assert.Null(result.Node);
+        Assert.NotNull(result.Message);
+        Assert.Equal(1, result.LineNumber);
     }
 }
