@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using Rodeo.PlainText.Core.Entities;
+using System.Windows;
 using System.Windows.Controls;
 
 namespace Rodeo.PlainText.Wpf;
@@ -12,36 +13,40 @@ public partial class MainWindow : Window
     {
         InitializeComponent();
         inputTextBox.TextChanged += inputTextBox_TextChanged;
-        UpdateStatus(inputTextBox.Text);
+        var input = inputTextBox.Text;
+        ParseAndShowInput(input);
+
     }
     private void inputTextBox_TextChanged(object sender, TextChangedEventArgs e)
     {
-        var json = ((TextBox)sender).Text;
-        UpdateTreeView(json);
-        UpdateStatus(json);
+        var input = ((TextBox)sender).Text;
+        ParseAndShowInput(input);
     }
 
-    private void UpdateTreeView(string json)
+    // At the moment this is redundant, but later we will add formats beyond JSON.
+    private void ParseAndShowInput(string input) => ParseAndShowJson(input);
+
+    private void ParseAndShowJson(string json)
     {
-        if (string.IsNullOrWhiteSpace(json))
-        {
-            outputTreeView.ItemsSource = null;
-            return;
-        }
         var result = Core.Json.JsonParser.ParseJson(json);
-        if (result.Node == null)
-        {
-            return;
-        }
-        else
+        UpdateTreeViewAndStatusText(result);
+    }
+
+    private void UpdateTreeViewAndStatusText(DataNodeResult result)
+    {
+        if (result.Node != null)
         {
             outputTreeView.ItemsSource = new[] { result.Node };
+            statusTextBox.Text = "Valid Input :)";
         }
-    }
-
-    private void UpdateStatus(string json)
-    {
-        var result = Core.Json.JsonParser.ParseJson(json);
-        statusTextBox.Text = result.Message + " | Line: " + result.LineNumber;
+        else if (result.Message != null)
+        {
+            statusTextBox.Text = $"Line {result.LineNumber}: {result.Message}";
+        }
+        else
+        {   
+            outputTreeView.ItemsSource = null;
+            statusTextBox.Text = "Nothing to display.";
+        }
     }
 }
