@@ -5,8 +5,7 @@ namespace Rodeo.PlainText.Core.Json;
 
 public class JsonParser
 {
-    // Line number offset to convert from 0-based to 1-based line number (humans read line 1 as line 1, not line 0!)
-    private const int LineOffset = 1;
+    private const int LineOffset = Constants.LineOffset;
 
     public static DataNodeResult ParseJson(string json)
     {

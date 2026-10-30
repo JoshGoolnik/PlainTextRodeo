@@ -133,7 +133,7 @@ public class JsonParserUnitTests
     }
 
     [Fact]
-    public void TestJsonParser_InvalidJson_ReturnsErrorResult()
+    public void TestJsonParser_InvalidJson_ReturnsErrorMessageAndLineNumber()
     {
         // Arrange
         var json = "{\"name\": }";
