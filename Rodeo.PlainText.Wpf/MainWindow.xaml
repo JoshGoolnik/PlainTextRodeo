@@ -17,14 +17,30 @@
             <RowDefinition Height="20" />
         </Grid.RowDefinitions>
         <TextBox Name="inputTextBox" AcceptsReturn="True" Text="Hello, World!" Grid.Row="0" 
-                 FontSize="10" FontFamily="Consolas" HorizontalAlignment="Left" VerticalAlignment="Top" />
+                 FontSize="14" FontFamily="Consolas" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" 
+                 VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" />
         <GridSplitter Grid.Column="0" Grid.Row="0" Width="5" HorizontalAlignment="Right" VerticalAlignment="Stretch" Background="Gray" />
         <TreeView Name="outputTreeView" Grid.Column="1" Grid.Row="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
             <TreeView.ItemTemplate>
                 <HierarchicalDataTemplate DataType="{x:Type entities:DataNode}" ItemsSource="{Binding Children}">
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="{Binding Name}" />
-                        <TextBlock Text="{Binding Value}" Margin="10,0,0,0"/>
+                        <TextBlock Text=":">
+                            <TextBlock.Style>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="Visibility" Value="Visible" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding Name}" Value="{x:Null}">
+                                            <Setter Property="Visibility" Value="Collapsed" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
+                        <TextBlock Text="{Binding Value}" Margin="5,0,0,0" />
+                        <TextBlock Text="[Type:" Margin="10,0,0,0" />
+                        <TextBlock Text="{Binding NodeType}" Margin="5,0,0,0" />
+                        <TextBlock Text="]"/>
                     </StackPanel>
                 </HierarchicalDataTemplate>
             </TreeView.ItemTemplate>

@@ -35,7 +35,7 @@ public partial class MainWindow : Window
         }
         else
         {
-            outputTreeView.ItemsSource = result.Node.Children;
+            outputTreeView.ItemsSource = new[] { result.Node };
         }
     }
 
