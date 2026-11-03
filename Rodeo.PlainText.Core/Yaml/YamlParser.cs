@@ -1,43 +1,54 @@
 ﻿using Rodeo.PlainText.Core.Entities;
-using System;
-using System.Collections.Generic;
-using System.Text;
-
+using System.Globalization;
+using YamlDotNet.Core;
+using YamlDotNet.RepresentationModel;
 namespace Rodeo.PlainText.Core.Yaml;
 
 public class YamlParser
 {
-    private const int LineOffset = Constants.LineOffset;
     public static DataNodeResult ParseYaml(string yaml)
     {
         if (string.IsNullOrWhiteSpace(yaml))
         {
             // Empty or whitespace YAML string, return an empty DataNodeResult with no node and no message
-            return new DataNodeResult { Node = null, Message = null, LineNumber = null };
+            return EmptyDataNodeResult();
         }
         else
         {
             try
             {
                 var input = new StringReader(yaml);
-                var yamlStream = new YamlDotNet.RepresentationModel.YamlStream();
+                var yamlStream = new YamlStream();
                 yamlStream.Load(input);
+
+                if (yamlStream.Documents.Count == 0)
+                {
+                    // No documents found in the YAML string, return an empty DataNodeResult with no node and no message
+                    return EmptyDataNodeResult();
+                }
+
                 var rootNode = yamlStream.Documents[0].RootNode;
                 var dataNode = ParseElement(rootNode, null);
                 return new DataNodeResult { Node = dataNode };
             }
-            catch (YamlDotNet.Core.YamlException ex)
+            // We have two catches here, for two different issues - first if there's a normal YamlException...
+            catch (YamlException ex)
             {
-                return new DataNodeResult { Message = ex.Message, LineNumber = ex.Start.Line + LineOffset };
+                return new DataNodeResult { Message = ex.Message, LineNumber = ex.Start.Line };
+            }
+            // ... second if you get specific errors, like an unclosed bracket and a new line. I'm not sure why it doesn't use Yaml Exception...
+            catch (InvalidOperationException ex)
+            {
+                return new DataNodeResult { Message = ex.Message };
             }
         }
     }
-    private static DataNode ParseElement(YamlDotNet.RepresentationModel.YamlNode node, string? name)
+    private static DataNode ParseElement(YamlNode node, string? name)
     {
         switch (node.NodeType)
         {
-            case YamlDotNet.RepresentationModel.YamlNodeType.Mapping:
-                var mappingNode = (YamlDotNet.RepresentationModel.YamlMappingNode)node;
+            case YamlNodeType.Mapping:
+                var mappingNode = (YamlMappingNode)node;
                 List<DataNode> mappingChildren = new List<DataNode>();
                 foreach (var entry in mappingNode.Children)
                 {
@@ -50,8 +61,8 @@ public class YamlParser
                     NodeType = DataNodeType.Object,
                     Children = mappingChildren
                 };
-            case YamlDotNet.RepresentationModel.YamlNodeType.Sequence:
-                var sequenceNode = (YamlDotNet.RepresentationModel.YamlSequenceNode)node;
+            case YamlNodeType.Sequence:
+                var sequenceNode = (YamlSequenceNode)node;
                 List<DataNode> sequenceChildren = new List<DataNode>();
                 foreach (var item in sequenceNode.Children)
                 {
@@ -64,42 +75,38 @@ public class YamlParser
                     NodeType = DataNodeType.Array,
                     Children = sequenceChildren
                 };
-            case YamlDotNet.RepresentationModel.YamlNodeType.Scalar:
-                var scalarNode = (YamlDotNet.RepresentationModel.YamlScalarNode)node;
-                var nodeType = IdentifyScalarType(scalarNode.Value);
+            case YamlNodeType.Scalar:
+                var scalarNode = (YamlScalarNode)node;
+                var nodeType = IdentifyScalarType(scalarNode);
                 return new DataNode
                 {
                     Name = name,
                     NodeType = nodeType,
-                    Value = scalarNode.Value
+                    Value = nodeType == DataNodeType.Null ? null : scalarNode.Value
                 };
             default:
-                throw new InvalidOperationException($"Unsupported YAML node type: {node.NodeType}");
+                throw new NotSupportedException($"Unsupported YAML node type: {node.NodeType}");
         }
     }
 
-    private static DataNodeType IdentifyScalarType(string? value)
+    private static DataNodeType IdentifyScalarType(YamlScalarNode scalar)
     {
-        if (string.IsNullOrEmpty(value))
-        {
-            return DataNodeType.Null;
-        }
-        else
-            if (int.TryParse(value, out _))
-        {
-            return DataNodeType.Number;
-        }
-        else if (double.TryParse(value, out _))
-        {
-            return DataNodeType.Number;
-        }
-        else if (bool.TryParse(value, out _))
-        {
-            return DataNodeType.Boolean;
-        }
-        else
-        {
+        var value = scalar.Value;
+
+        if (scalar.Style != ScalarStyle.Plain)
             return DataNodeType.String;
-        }
+
+        if (string.IsNullOrEmpty(value) || value == "null" || value == "~")
+            return DataNodeType.Null;
+
+        if (double.TryParse(value, NumberStyles.Float, CultureInfo.InvariantCulture, out _))
+            return DataNodeType.Number;
+
+        if (bool.TryParse(value, out _))
+            return DataNodeType.Boolean;
+
+        return DataNodeType.String;
     }
+
+    private static DataNodeResult EmptyDataNodeResult() => new DataNodeResult { Node = null, Message = null, LineNumber = null };
 }

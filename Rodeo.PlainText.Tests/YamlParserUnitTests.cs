@@ -5,8 +5,6 @@ namespace Rodeo.PlainText.Tests;
 
 public class YamlParserUnitTests
 {
-    // Line number offset to convert from 0-based to 1-based line number (humans read line 1 as line 1, not line 0!)
-    private const int LineOffset = 1;
     [Fact]
     public void TestYamlParser_ValidYamlWithNameProperty_ReturnsDataNode()
     {
@@ -79,13 +77,83 @@ public class YamlParserUnitTests
     public void TestYamlParser_InvalidYaml_ReturnsErrorMessageAndLineNumber()
     {
         // Arrange
-        var yaml = "name: Josh\nage: 30\ninvalid_yaml";
+        var yaml = "name: Josh\nage: 42\ninvalid_yaml";
         // Act
         var result = YamlParser.ParseYaml(yaml);
         // Assert
         Assert.NotNull(result);
         Assert.Null(result.Node);
         Assert.NotNull(result.Message);
-        Assert.Equal(3 + LineOffset, result.LineNumber); // The error should be on line 3 (0-based index)
+        Assert.Equal(3, result.LineNumber); // YamlDotNet counts lines from 1, so line 3 is line 3
+    }
+
+    [Fact]
+    public void TestYamlParser_JustAComment_ReturnsEmptyDataNodeResult()
+    {
+        // Arrange
+        var yaml = "# This is a comment";
+        // Act
+        var result = YamlParser.ParseYaml(yaml);
+        // Assert
+        Assert.NotNull(result);
+        Assert.Null(result.Node);
+        Assert.Null(result.Message);
+        Assert.Null(result.LineNumber);
+    }
+
+    [Fact]
+    public void TestYamlParser_InvalidYamlWithUnclosedBracketAndNewLine_ReturnsErrorMessage()
+    {
+        // Arrange
+        var yaml = "name: Josh\nage: 42\ninvalid_yaml: [1, 2, 3\ncity: Aberdeen";
+        // Act
+        var result = YamlParser.ParseYaml(yaml);
+        // Assert
+        Assert.NotNull(result);
+        Assert.Null(result.Node);
+        Assert.NotNull(result.Message);
+        Assert.Null(result.LineNumber); // This kind of error (InvalidOperationException) carries no line number
+    }
+
+    [Fact]
+    public void TestYamlParser_QuotedNumber_ReturnsString()
+    {
+        // Arrange
+        var yaml = "age: \"42\"";
+        // Act
+        var result = YamlParser.ParseYaml(yaml);
+        // Assert
+        var ageNode = result.Node?.Children?.FirstOrDefault(n => n.Name == "age");
+        Assert.NotNull(ageNode);
+        Assert.Equal(DataNodeType.String, ageNode.NodeType); // The quotes make it text, not a number
+        Assert.Equal("42", ageNode.Value);
+    }
+
+    [Theory]
+    [InlineData("name: null")]
+    [InlineData("name: ~")]
+    [InlineData("name:")]
+    public void TestYamlParser_NullValue_ReturnsNullNode(string yaml)
+    {
+        // Act
+        var result = YamlParser.ParseYaml(yaml);
+        // Assert
+        var nameNode = result.Node?.Children?.FirstOrDefault(n => n.Name == "name");
+        Assert.NotNull(nameNode);
+        Assert.Equal(DataNodeType.Null, nameNode.NodeType);
+        Assert.Null(nameNode.Value); // Same as the JSON parser: Null nodes have no value
+    }
+
+    [Fact]
+    public void TestYamlParser_NumberWithComma_ReturnsString()
+    {
+        // Arrange
+        var yaml = "count: 1,000";
+        // Act
+        var result = YamlParser.ParseYaml(yaml);
+        // Assert
+        var countNode = result.Node?.Children?.FirstOrDefault(n => n.Name == "count");
+        Assert.NotNull(countNode);
+        Assert.Equal(DataNodeType.String, countNode.NodeType); // YAML numbers don't use thousands separators
     }
 }
