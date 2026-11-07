@@ -1,4 +1,5 @@
 ﻿using Rodeo.PlainText.Core.Entities;
+using Rodeo.PlainText.Core.Json;
 using Rodeo.PlainText.Core.Yaml;
 
 namespace Rodeo.PlainText.Tests;
@@ -79,34 +80,51 @@ public class YamlParserUnitTests
     }
 
     [Fact]
-    public void TestYamlParser_InvalidYaml_ReturnsErrorMessageAndLineNumber()
+    public void TestYamlParser_ValidYaml_ReturnsDataNode()
     {
         // Arrange
-        var yaml = "name: Josh\nage: 42\ninvalid_yaml";
+        var yaml = "name: Josh\nage: 42\nisStudent: false";
         var yamlParser = new YamlParser();
         // Act
         var result = yamlParser.Parse(yaml);
         // Assert
         Assert.NotNull(result);
-        Assert.Null(result.Node);
-        Assert.NotNull(result.Message);
-        Assert.Equal(3, result.LineNumber); // YamlDotNet counts lines from 1, so line 3 is line 3
+        Assert.Equal("Josh", result.Node?.Children?.FirstOrDefault(n => n.Name == "name")?.Value);
+        Assert.Equal("42", result.Node?.Children?.FirstOrDefault(n => n.Name == "age")?.Value);
+        Assert.Equal("false", result.Node?.Children?.FirstOrDefault(n => n.Name == "isStudent")?.Value);
     }
 
     [Fact]
-    public void TestYamlParser_JustAComment_ReturnsEmptyDataNodeResult()
+    public void TestYamlParser_EmptyYaml_ReturnsEmptyDataNode()
     {
         // Arrange
-        var yaml = "# This is a comment";
+        var yaml = "{}";
         var yamlParser = new YamlParser();
         // Act
         var result = yamlParser.Parse(yaml);
         // Assert
         Assert.NotNull(result);
-        Assert.Null(result.Node);
-        Assert.Null(result.Message);
-        Assert.Null(result.LineNumber);
+        Assert.Equal(DataNodeType.Object, result.Node?.NodeType);
+        Assert.Empty(result.Node?.Children);
     }
+
+    [Fact]
+    public void TestYamlParser_NestedYaml_ReturnsCorrectStructure()
+    {
+        // Arrange
+        var yaml = "person:\n  name: John\n  age: 30";
+        var yamlParser = new YamlParser();
+        // Act
+        var result = yamlParser.Parse(yaml);
+        // Assert
+        Assert.NotNull(result);
+        var personNode = result.Node?.Children?.FirstOrDefault(n => n.Name == "person");
+        Assert.NotNull(personNode);
+        Assert.Equal(DataNodeType.Object, personNode.NodeType);
+        Assert.Equal("John", personNode.Children?.FirstOrDefault(n => n.Name == "name")?.Value);
+        Assert.Equal("30", personNode.Children?.FirstOrDefault(n => n.Name == "age")?.Value);
+    }
+
 
     [Fact]
     public void TestYamlParser_InvalidYamlWithUnclosedBracketAndNewLine_ReturnsErrorMessage()
@@ -167,5 +185,35 @@ public class YamlParserUnitTests
         var countNode = result.Node?.Children?.FirstOrDefault(n => n.Name == "count");
         Assert.NotNull(countNode);
         Assert.Equal(DataNodeType.String, countNode.NodeType); // YAML numbers don't use thousands separators
+    }
+
+    [Fact]
+    public void TestYamlParser_InvalidYaml_ReturnsErrorMessageAndLineNumber()
+    {
+        // Arrange
+        var yaml = "name: Josh\nage: 42\ninvalid_yaml";
+        var yamlParser = new YamlParser();
+        // Act
+        var result = yamlParser.Parse(yaml);
+        // Assert
+        Assert.NotNull(result);
+        Assert.Null(result.Node);
+        Assert.NotNull(result.Message);
+        Assert.Equal(3, result.LineNumber); // YamlDotNet counts lines from 1, so line 3 is line 3
+    }
+
+    [Fact]
+    public void TestYamlParser_JustAComment_ReturnsEmptyDataNodeResult()
+    {
+        // Arrange
+        var yaml = "# This is a comment";
+        var yamlParser = new YamlParser();
+        // Act
+        var result = yamlParser.Parse(yaml);
+        // Assert
+        Assert.NotNull(result);
+        Assert.Null(result.Node);
+        Assert.Null(result.Message);
+        Assert.Null(result.LineNumber);
     }
 }

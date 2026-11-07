@@ -66,7 +66,7 @@ public class JsonParserUnitTests
     }
 
     [Fact]
-    public void TestJsonParser_EmptyString_ReturnsEmptyResult()
+    public void TestJsonParser_EmptyString_ReturnsEmptyDataNodeResult()
     {
         // Arrange
         var json = "";
