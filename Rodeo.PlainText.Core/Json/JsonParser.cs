@@ -1,13 +1,14 @@
 ﻿using Rodeo.PlainText.Core.Entities;
+using Rodeo.PlainText.Core.Intefaces;
 using System.Text.Json;
 
 namespace Rodeo.PlainText.Core.Json;
 
-public class JsonParser
+public class JsonParser : IPlainTextDataParser
 {
     private const int LineOffset = Constants.LineOffset;
 
-    public static DataNodeResult ParseJson(string json)
+    public DataNodeResult Parse(string json)
     {
         if (string.IsNullOrWhiteSpace(json))
         {
@@ -31,7 +32,7 @@ public class JsonParser
         }
     }
 
-    private static DataNode ParseElement(JsonElement element, string? name)
+    private DataNode ParseElement(JsonElement element, string? name)
     {
         switch (element.ValueKind)
         {

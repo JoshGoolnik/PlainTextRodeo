@@ -10,8 +10,9 @@ public class YamlParserUnitTests
     {
         // Arrange
         var yaml = "name: Josh";
+        var yamlParser = new YamlParser();
         // Act
-        var result = YamlParser.ParseYaml(yaml);
+        var result = yamlParser.Parse(yaml);
         // Assert
         Assert.NotNull(result);
         Assert.Equal("Josh", result.Node?.Children?.FirstOrDefault(n => n.Name == "name")?.Value);
@@ -22,8 +23,9 @@ public class YamlParserUnitTests
     {
         // Arrange
         var yaml = "numbers:\n  - 1\n  - 2";
+        var yamlParser = new YamlParser();
         // Act
-        var result = YamlParser.ParseYaml(yaml);
+        var result = yamlParser.Parse(yaml);
         // Assert
         Assert.NotNull(result);
         var numbersNode = result.Node?.Children?.FirstOrDefault(n => n.Name == "numbers");
@@ -38,8 +40,9 @@ public class YamlParserUnitTests
     {
         // Arrange
         var yaml = "number: 1.10";
+        var yamlParser = new YamlParser();
         // Act
-        var result = YamlParser.ParseYaml(yaml);
+        var result = yamlParser.Parse(yaml);
         // Assert
         Assert.NotNull(result);
         Assert.Equal("1.10", result.Node?.Children?.FirstOrDefault(n => n.Name == "number")?.Value);
@@ -50,8 +53,9 @@ public class YamlParserUnitTests
     {
         // Arrange
         var yaml = "object: {}";
+        var yamlParser = new YamlParser();
         // Act
-        var result = YamlParser.ParseYaml(yaml);
+        var result = yamlParser.Parse(yaml);
         // Assert
         Assert.NotNull(result);
         var objectNode = result.Node?.Children?.FirstOrDefault(n => n.Name == "object");
@@ -64,8 +68,9 @@ public class YamlParserUnitTests
     {
         // Arrange
         var yaml = "";
+        var yamlParser = new YamlParser();
         // Act
-        var result = YamlParser.ParseYaml(yaml);
+        var result = yamlParser.Parse(yaml);
         // Assert
         Assert.NotNull(result);
         Assert.Null(result.Node);
@@ -78,8 +83,9 @@ public class YamlParserUnitTests
     {
         // Arrange
         var yaml = "name: Josh\nage: 42\ninvalid_yaml";
+        var yamlParser = new YamlParser();
         // Act
-        var result = YamlParser.ParseYaml(yaml);
+        var result = yamlParser.Parse(yaml);
         // Assert
         Assert.NotNull(result);
         Assert.Null(result.Node);
@@ -92,8 +98,9 @@ public class YamlParserUnitTests
     {
         // Arrange
         var yaml = "# This is a comment";
+        var yamlParser = new YamlParser();
         // Act
-        var result = YamlParser.ParseYaml(yaml);
+        var result = yamlParser.Parse(yaml);
         // Assert
         Assert.NotNull(result);
         Assert.Null(result.Node);
@@ -106,8 +113,9 @@ public class YamlParserUnitTests
     {
         // Arrange
         var yaml = "name: Josh\nage: 42\ninvalid_yaml: [1, 2, 3\ncity: Aberdeen";
+        var yamlParser = new YamlParser();
         // Act
-        var result = YamlParser.ParseYaml(yaml);
+        var result = yamlParser.Parse(yaml);
         // Assert
         Assert.NotNull(result);
         Assert.Null(result.Node);
@@ -120,8 +128,9 @@ public class YamlParserUnitTests
     {
         // Arrange
         var yaml = "age: \"42\"";
+        var yamlParser = new YamlParser();
         // Act
-        var result = YamlParser.ParseYaml(yaml);
+        var result = yamlParser.Parse(yaml);
         // Assert
         var ageNode = result.Node?.Children?.FirstOrDefault(n => n.Name == "age");
         Assert.NotNull(ageNode);
@@ -135,8 +144,10 @@ public class YamlParserUnitTests
     [InlineData("name:")]
     public void TestYamlParser_NullValue_ReturnsNullNode(string yaml)
     {
+        // Arrange
+        var yamlParser = new YamlParser();
         // Act
-        var result = YamlParser.ParseYaml(yaml);
+        var result = yamlParser.Parse(yaml);
         // Assert
         var nameNode = result.Node?.Children?.FirstOrDefault(n => n.Name == "name");
         Assert.NotNull(nameNode);
@@ -149,8 +160,9 @@ public class YamlParserUnitTests
     {
         // Arrange
         var yaml = "count: 1,000";
+        var yamlParser = new YamlParser();
         // Act
-        var result = YamlParser.ParseYaml(yaml);
+        var result = yamlParser.Parse(yaml);
         // Assert
         var countNode = result.Node?.Children?.FirstOrDefault(n => n.Name == "count");
         Assert.NotNull(countNode);

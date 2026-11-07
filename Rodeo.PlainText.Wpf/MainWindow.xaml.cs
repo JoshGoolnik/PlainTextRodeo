@@ -28,7 +28,8 @@ public partial class MainWindow : Window
 
     private void ParseAndShowJson(string json)
     {
-        var result = Core.Json.JsonParser.ParseJson(json);
+        var jsonParser = new Core.Json.JsonParser();
+        var result = jsonParser.Parse(json);
         UpdateTreeViewAndStatusText(result);
     }
 

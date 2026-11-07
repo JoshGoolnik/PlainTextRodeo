@@ -11,8 +11,9 @@ public class JsonParserUnitTests
     {
         // Arrange
         var json = "{\"name\":\"Josh\"}";
+        var jsonParser = new JsonParser();
         // Act
-        var result = JsonParser.ParseJson(json);
+        var result = jsonParser.Parse(json);
         // Assert
         Assert.NotNull(result);
         Assert.Equal("Josh", result.Node?.Children?.FirstOrDefault(n => n.Name == "name")?.Value);
@@ -23,8 +24,9 @@ public class JsonParserUnitTests
     {
         // Arrange
         var json = "{\"numbers\":[1,2]}";
+        var jsonParser = new JsonParser();
         // Act
-        var result = JsonParser.ParseJson(json);
+        var result = jsonParser.Parse(json);
         // Assert
         Assert.NotNull(result);
         var numbersNode = result.Node?.Children?.FirstOrDefault(n => n.Name == "numbers");
@@ -39,8 +41,9 @@ public class JsonParserUnitTests
     {
         // Arrange
         var json = "{\"number\":1.10}";
+        var jsonParser = new JsonParser();
         // Act
-        var result = JsonParser.ParseJson(json);
+        var result = jsonParser.Parse(json);
         // Assert
         Assert.NotNull(result);
         Assert.Equal("1.10", result.Node?.Children?.FirstOrDefault(n => n.Name == "number")?.Value);
@@ -51,8 +54,9 @@ public class JsonParserUnitTests
     {
         // Arrange
         var json = "{\"object\":{}}";
+        var jsonParser = new JsonParser();
         // Act
-        var result = JsonParser.ParseJson(json);
+        var result = jsonParser.Parse(json);
         // Assert
         Assert.NotNull(result);
         var objectNode = result.Node?.Children?.FirstOrDefault(n => n.Name == "object");
@@ -66,8 +70,9 @@ public class JsonParserUnitTests
     {
         // Arrange
         var json = "";
+        var jsonParser = new JsonParser();
         // Act
-        var result = JsonParser.ParseJson(json);
+        var result = jsonParser.Parse(json);
         // Assert
         Assert.NotNull(result);
         Assert.Null(result.Node);
@@ -80,8 +85,9 @@ public class JsonParserUnitTests
     {
         // Arrange
         var json = "{\"name\":\"Josh\",\"age\":42,\"isStudent\":false}";
+        var jsonParser = new JsonParser();
         // Act
-        var result = JsonParser.ParseJson(json);
+        var result = jsonParser.Parse(json);
         // Assert
         Assert.NotNull(result);
         Assert.Equal("Josh", result.Node?.Children?.FirstOrDefault(n => n.Name == "name")?.Value);
@@ -94,8 +100,9 @@ public class JsonParserUnitTests
     {
         // Arrange
         var json = "{}";
+        var jsonParser = new JsonParser();
         // Act
-        var result = JsonParser.ParseJson(json);
+        var result = jsonParser.Parse(json);
         // Assert
         Assert.NotNull(result);
         Assert.Equal(DataNodeType.Object, result.Node?.NodeType);
@@ -107,8 +114,9 @@ public class JsonParserUnitTests
     {
         // Arrange
         var json = "{\"person\":{\"name\":\"John\",\"age\":30}}";
+        var jsonParser = new JsonParser();
         // Act
-        var result = JsonParser.ParseJson(json);
+        var result = jsonParser.Parse(json);
         // Assert
         Assert.NotNull(result);
         var personNode = result.Node?.Children?.FirstOrDefault(n => n.Name == "person");
@@ -123,8 +131,9 @@ public class JsonParserUnitTests
     {
         // Arrange
         var json = "{\"name\":null}";
+        var jsonParser = new JsonParser();
         // Act
-        var result = JsonParser.ParseJson(json);
+        var result = jsonParser.Parse(json);
         // Assert
         var nameNode = result.Node?.Children?.FirstOrDefault(n => n.Name == "name");
         Assert.NotNull(nameNode);
@@ -137,8 +146,9 @@ public class JsonParserUnitTests
     {
         // Arrange
         var json = "{\"name\": }";
+        var jsonParser = new JsonParser();
         // Act
-        var result = JsonParser.ParseJson(json);
+        var result = jsonParser.Parse(json);
         // Assert
         Assert.Null(result.Node);
         Assert.NotNull(result.Message);

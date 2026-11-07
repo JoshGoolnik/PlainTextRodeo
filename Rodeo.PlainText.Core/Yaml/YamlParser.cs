@@ -1,12 +1,13 @@
 ﻿using Rodeo.PlainText.Core.Entities;
+using Rodeo.PlainText.Core.Intefaces;
 using System.Globalization;
 using YamlDotNet.Core;
 using YamlDotNet.RepresentationModel;
 namespace Rodeo.PlainText.Core.Yaml;
 
-public class YamlParser
+public class YamlParser : IPlainTextDataParser
 {
-    public static DataNodeResult ParseYaml(string yaml)
+    public DataNodeResult Parse(string yaml)
     {
         if (string.IsNullOrWhiteSpace(yaml))
         {
@@ -43,7 +44,7 @@ public class YamlParser
             }
         }
     }
-    private static DataNode ParseElement(YamlNode node, string? name)
+    private DataNode ParseElement(YamlNode node, string? name)
     {
         switch (node.NodeType)
         {
@@ -89,7 +90,7 @@ public class YamlParser
         }
     }
 
-    private static DataNodeType IdentifyScalarType(YamlScalarNode scalar)
+    private DataNodeType IdentifyScalarType(YamlScalarNode scalar)
     {
         var value = scalar.Value;
 
@@ -108,5 +109,5 @@ public class YamlParser
         return DataNodeType.String;
     }
 
-    private static DataNodeResult EmptyDataNodeResult() => new DataNodeResult { Node = null, Message = null, LineNumber = null };
+    private DataNodeResult EmptyDataNodeResult() => new DataNodeResult { Node = null, Message = null, LineNumber = null };
 }
