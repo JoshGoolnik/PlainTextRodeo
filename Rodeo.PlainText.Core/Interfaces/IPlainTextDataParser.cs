@@ -1,8 +1,8 @@
 ﻿using Rodeo.PlainText.Core.Entities;
 
-namespace Rodeo.PlainText.Core.Intefaces
+namespace Rodeo.PlainText.Core.Interfaces
 {
-    internal interface IPlainTextDataParser
+    public interface IPlainTextDataParser
     {
         DataNodeResult Parse(string input);
     }

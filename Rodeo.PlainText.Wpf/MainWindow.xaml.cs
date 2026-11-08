@@ -1,4 +1,7 @@
 ﻿using Rodeo.PlainText.Core.Entities;
+using Rodeo.PlainText.Core.Interfaces;
+using Rodeo.PlainText.Core.Json;
+using Rodeo.PlainText.Core.Yaml;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -28,37 +31,24 @@ public partial class MainWindow : Window
         ParseAndShowInput(selectedFileType, input);
     }
 
-    // At the moment this is redundant, but later we will add formats beyond JSON.
     private void ParseAndShowInput(string fileType, string input)
     {
+        IPlainTextDataParser parser;
         switch (fileType.ToLower())
         {
             case "json":
-                ParseAndShowJson(input);
+                parser = new JsonParser();
                 break;
             case "yaml":
-                ParseAndShowYaml(input);
+                parser = new YamlParser();
                 break;
             // Add handling for other file types here
             default:
                 statusTextBox.Text = $"Unsupported file type: {fileType}";
                 outputTreeView.ItemsSource = null;
-                break;
+                return;
         }
-    }
-
-    private void ParseAndShowJson(string json)
-    {
-        var jsonParser = new Core.Json.JsonParser();
-        var result = jsonParser.Parse(json);
-        UpdateTreeViewAndStatusText(result);
-    }
-
-    private void ParseAndShowYaml(string yaml)
-    {
-        var yamlParser = new Core.Yaml.YamlParser();
-        var result = yamlParser.Parse(yaml);
-        UpdateTreeViewAndStatusText(result);
+        UpdateTreeViewAndStatusText(parser.Parse(input));
     }
 
     private void UpdateTreeViewAndStatusText(DataNodeResult result)

@@ -1,5 +1,5 @@
 ﻿using Rodeo.PlainText.Core.Entities;
-using Rodeo.PlainText.Core.Intefaces;
+using Rodeo.PlainText.Core.Interfaces;
 using System.Text.Json;
 
 namespace Rodeo.PlainText.Core.Json;
