@@ -13,14 +13,19 @@
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
+            <RowDefinition Height="20" />
             <RowDefinition Height="*" />
             <RowDefinition Height="20" />
         </Grid.RowDefinitions>
-        <TextBox Name="inputTextBox" AcceptsReturn="True" Text="Hello, World!" Grid.Row="0" 
+        <ComboBox Name="fileTypeComboBox" Grid.Row="0" Grid.ColumnSpan="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+            <ComboBoxItem Content="JSON" IsSelected="True"/>
+            <ComboBoxItem Content="YAML" />
+        </ComboBox>
+        <TextBox Name="inputTextBox" AcceptsReturn="True" Text="Hello, World!" Grid.Row="1" 
                  FontSize="14" FontFamily="Consolas" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" 
                  VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" />
-        <GridSplitter Grid.Column="0" Grid.Row="0" Width="5" HorizontalAlignment="Right" VerticalAlignment="Stretch" Background="Gray" />
-        <TreeView Name="outputTreeView" Grid.Column="1" Grid.Row="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+        <GridSplitter Grid.Column="0" Grid.Row="1" Width="5" HorizontalAlignment="Right" VerticalAlignment="Stretch" Background="Gray" />
+        <TreeView Name="outputTreeView" Grid.Column="1" Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
             <TreeView.ItemTemplate>
                 <HierarchicalDataTemplate DataType="{x:Type entities:DataNode}" ItemsSource="{Binding Children}">
                     <StackPanel Orientation="Horizontal">
@@ -45,6 +50,6 @@
                 </HierarchicalDataTemplate>
             </TreeView.ItemTemplate>
         </TreeView>
-        <TextBox Name="statusTextBox" Grid.Row="1" Grid.ColumnSpan="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+        <TextBox Name="statusTextBox" Grid.Row="2" Grid.ColumnSpan="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
     </Grid>
 </Window>

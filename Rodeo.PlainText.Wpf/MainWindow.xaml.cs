@@ -12,24 +12,52 @@ public partial class MainWindow : Window
     public MainWindow()
     {
         InitializeComponent();
+        fileTypeComboBox.SelectionChanged += fileTypeComboBox_SelectionChanged;
         inputTextBox.TextChanged += inputTextBox_TextChanged;
-        var input = inputTextBox.Text;
-        ParseAndShowInput(input);
-
+        InputUpdate();
     }
-    private void inputTextBox_TextChanged(object sender, TextChangedEventArgs e)
+
+    private void fileTypeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e) => InputUpdate();
+
+    private void inputTextBox_TextChanged(object sender, TextChangedEventArgs e) => InputUpdate();
+
+    private void InputUpdate()
     {
-        var input = ((TextBox)sender).Text;
-        ParseAndShowInput(input);
+        var selectedFileType = ((ComboBoxItem)fileTypeComboBox.SelectedItem).Content.ToString();
+        var input = inputTextBox.Text;
+        ParseAndShowInput(selectedFileType, input);
     }
 
     // At the moment this is redundant, but later we will add formats beyond JSON.
-    private void ParseAndShowInput(string input) => ParseAndShowJson(input);
+    private void ParseAndShowInput(string fileType, string input)
+    {
+        switch (fileType.ToLower())
+        {
+            case "json":
+                ParseAndShowJson(input);
+                break;
+            case "yaml":
+                ParseAndShowYaml(input);
+                break;
+            // Add handling for other file types here
+            default:
+                statusTextBox.Text = $"Unsupported file type: {fileType}";
+                outputTreeView.ItemsSource = null;
+                break;
+        }
+    }
 
     private void ParseAndShowJson(string json)
     {
         var jsonParser = new Core.Json.JsonParser();
         var result = jsonParser.Parse(json);
+        UpdateTreeViewAndStatusText(result);
+    }
+
+    private void ParseAndShowYaml(string yaml)
+    {
+        var yamlParser = new Core.Yaml.YamlParser();
+        var result = yamlParser.Parse(yaml);
         UpdateTreeViewAndStatusText(result);
     }
 
