@@ -1,5 +1,4 @@
 ﻿using Rodeo.PlainText.Core.Entities;
-using Rodeo.PlainText.Core.Json;
 using Rodeo.PlainText.Core.Yaml;
 
 namespace Rodeo.PlainText.Tests;

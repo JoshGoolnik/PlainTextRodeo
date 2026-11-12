@@ -1,6 +1,7 @@
 ﻿using Rodeo.PlainText.Core.Entities;
 using Rodeo.PlainText.Core.Interfaces;
 using Rodeo.PlainText.Core.Json;
+using Rodeo.PlainText.Core.Xml;
 using Rodeo.PlainText.Core.Yaml;
 using System.Windows;
 using System.Windows.Controls;
@@ -41,6 +42,9 @@ public partial class MainWindow : Window
                 break;
             case "yaml":
                 parser = new YamlParser();
+                break;
+            case "xml":
+                parser = new XmlParser();
                 break;
             // Add handling for other file types here
             default:

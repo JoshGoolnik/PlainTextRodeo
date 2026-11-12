@@ -20,6 +20,7 @@
         <ComboBox Name="fileTypeComboBox" Grid.Row="0" Grid.ColumnSpan="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
             <ComboBoxItem Content="JSON" IsSelected="True"/>
             <ComboBoxItem Content="YAML" />
+            <ComboBoxItem Content="XML" />
         </ComboBox>
         <TextBox Name="inputTextBox" AcceptsReturn="True" Text="Hello, World!" Grid.Row="1" 
                  FontSize="14" FontFamily="Consolas" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" 

@@ -7,5 +7,7 @@ public enum DataNodeType
     Null,
     Number,
     Object,
-    String
+    String,
+    Text,
+    Element
 }
